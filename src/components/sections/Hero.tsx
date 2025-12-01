@@ -3,7 +3,6 @@
 import { motion } from "framer-motion";
 import { ArrowRight, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import Image from "next/image";
 
 const scrollToSection = (id: string) => {
   const element = document.getElementById(id);
@@ -25,24 +24,7 @@ export function Hero() {
       <div className="absolute top-0 left-0 right-0 h-px line-gradient" />
 
       <div className="container mx-auto px-4 relative z-10">
-        <div className="max-w-5xl mx-auto text-center">
-          {/* Logo */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="mb-12"
-          >
-            <Image
-              src="/image/logo-dark.png"
-              alt="BS Developer"
-              width={280}
-              height={90}
-              className="mx-auto h-24 md:h-32 w-auto"
-              priority
-            />
-          </motion.div>
-
+        <div className="max-w-5xl mx-auto text-center pt-20">
           {/* Main Headline */}
           <motion.h1
             initial={{ opacity: 0, y: 30 }}
