@@ -21,9 +21,9 @@ interface Message {
   content: string;
 }
 
-const INITIAL_MESSAGE = `Oi! 👋 Eu sou a Ana, assistente virtual do Bruno aqui da BS Developer!
+const INITIAL_MESSAGE = `Oi! Eu sou a Ana, assistente virtual da BS Developer.
 
-Estou aqui pra te ajudar a entender como a gente pode transformar sua ideia em um projeto digital de sucesso.
+Estou aqui pra te ajudar a entender como podemos transformar sua ideia em um projeto digital de sucesso.
 
 Me conta: você já tem um negócio e quer digitalizar, ou está começando algo do zero?`;
 
@@ -93,12 +93,10 @@ export function ChatBot() {
 
       setMessages((prev) => [...prev, assistantMessage]);
 
-      // Extrair pain points da resposta se houver
       if (data.painPoints) {
         setPainPoints((prev) => [...prev, ...data.painPoints]);
       }
     } catch {
-      // Fallback offline com respostas básicas
       const fallbackResponse = generateFallbackResponse(input);
       setMessages((prev) => [
         ...prev,
@@ -122,13 +120,13 @@ export function ChatBot() {
       lowerInput.includes("custo") ||
       lowerInput.includes("quanto")
     ) {
-      return `Entendo que o investimento é uma preocupação importante! 💰
+      return `Entendo que o investimento é uma preocupação importante!
 
-Nossos projetos variam de R$ 1.500 (landing pages simples) até R$ 15.000+ (SaaS complexos).
+Nossos projetos variam de R$ 3.000 (landing pages) até R$ 20.000+ (SaaS complexos).
 
-O legal é que a gente sempre encontra uma solução que cabe no seu bolso. Que tal fazer a simulação de orçamento no site? É rapidinho e sem compromisso!
+O legal é que sempre encontramos uma solução que gera ROI comprovado. Que tal preencher o formulário de qualificação? É rápido e sem compromisso!
 
-Ou se preferir, posso te conectar direto com o Bruno no WhatsApp pra vocês conversarem sobre o seu projeto específico. O que você prefere?`;
+Ou posso te conectar direto com o Bruno no WhatsApp. O que prefere?`;
     }
 
     if (
@@ -137,17 +135,16 @@ Ou se preferir, posso te conectar direto com o Bruno no WhatsApp pra vocês conv
       lowerInput.includes("demora") ||
       lowerInput.includes("dias")
     ) {
-      return `Ótima pergunta! ⏱️
+      return `Ótima pergunta!
 
-Os prazos dependem do tipo de projeto:
+Prazos típicos:
 • Landing pages: 7-14 dias
-• Sites institucionais: 14-21 dias
-• E-commerces e sistemas: 21-30 dias
-• SaaS completos: 30-60 dias
+• Sites e sistemas: 14-30 dias
+• SaaS completos: 30-45 dias
 
-E o Bruno tem uma taxa de 94% de aprovação na primeira versão, então você não fica semanas pedindo ajustes!
+E temos 94% de aprovação na primeira versão, então você não fica semanas pedindo ajustes.
 
-Qual é o seu prazo ideal pro projeto que você tem em mente?`;
+Qual é o seu prazo ideal?`;
     }
 
     if (
@@ -157,30 +154,14 @@ Qual é o seu prazo ideal pro projeto que você tem em mente?`;
       lowerInput.includes("ecommerce")
     ) {
       setPainPoints((prev) => [...prev, "Precisa de presença digital"]);
-      return `Perfeito! Sites e lojas são minha especialidade! 🚀
+      return `Sites e lojas são nossa especialidade!
 
-Me conta um pouquinho mais: você quer um site pra...
+Me conta mais: você quer...
 • Vender produtos/serviços online?
-• Captar leads e clientes?
-• Mostrar seu portfólio e trabalhos?
-• Ou algo diferente?
+• Captar leads qualificados?
+• Mostrar seu portfólio?
 
-Quanto mais eu entender sua necessidade, melhor consigo te direcionar pro tipo de projeto ideal!`;
-    }
-
-    if (
-      lowerInput.includes("app") ||
-      lowerInput.includes("aplicativo") ||
-      lowerInput.includes("mobile")
-    ) {
-      setPainPoints((prev) => [...prev, "Interesse em app mobile"]);
-      return `Apps são projetos super interessantes! 📱
-
-O Bruno já desenvolveu o Tenha Paz (bloqueador de spam pra Android) e tem experiência com apps nativos.
-
-Antes de avançar, uma pergunta importante: seu app precisa funcionar em Android, iOS ou nos dois? E você já tem uma ideia clara das funcionalidades principais?
-
-Isso me ajuda a te dar uma estimativa mais precisa!`;
+Quanto mais eu entender, melhor consigo te direcionar!`;
     }
 
     if (
@@ -189,25 +170,24 @@ Isso me ajuda a te dar uma estimativa mais precisa!`;
       lowerInput.includes("plataforma")
     ) {
       setPainPoints((prev) => [...prev, "Quer criar um SaaS"]);
-      return `Uau, SaaS é onde a mágica acontece! ✨
+      return `SaaS é nossa especialidade máxima!
 
-O Bruno criou o GuardaDinheiro que já tem 5.000+ usuários ativos. Então ele manja muito de:
-• Dashboard com analytics
+O Bruno criou o GuardaDinheiro com 15.000+ usuários. Entendemos de:
+• Arquitetura escalável
 • Sistema de assinaturas
 • Integração com pagamentos
-• Múltiplos usuários
+• Analytics avançado
 
-Qual é a ideia do seu SaaS? Ele resolve que tipo de problema?`;
+Qual é a ideia do seu SaaS?`;
     }
 
-    // Resposta padrão com call-to-action
-    return `Que legal você me contar isso! 😊
+    return `Interessante!
 
-Olha, pelo que você tá descrevendo, parece que o Bruno pode te ajudar sim!
+Pelo que você está descrevendo, parece que podemos ajudar sim.
 
-Quer que eu te conecte com ele no WhatsApp pra vocês conversarem melhor? Ele responde super rápido e vai adorar entender seu projeto em detalhes.
+Quer que eu te conecte com o Bruno no WhatsApp? Ele responde rápido e vai adorar entender seu projeto.
 
-Ou se preferir, você pode usar o simulador de orçamento aqui no site pra ter uma ideia de valores antes de conversar. O que faz mais sentido pra você?`;
+Ou preencha o formulário de qualificação no site. O que faz mais sentido?`;
   };
 
   const handleWhatsAppRedirect = () => {
@@ -236,11 +216,11 @@ Ou se preferir, você pode usar o simulador de orçamento aqui no site pra ter u
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0, opacity: 0 }}
             onClick={() => setIsOpen(true)}
-            className="fixed bottom-24 right-6 z-50 flex items-center gap-2 gradient-primary-135 text-white px-4 py-3 rounded-full shadow-lg hover:opacity-90 transition-opacity"
+            className="fixed bottom-24 right-6 z-50 flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 text-white px-4 py-3 rounded-full shadow-lg hover:bg-white/20 transition-all"
             aria-label="Abrir chat"
           >
             <Sparkles className="h-5 w-5" />
-            <span className="hidden sm:inline font-medium">Fale com a Ana</span>
+            <span className="hidden sm:inline font-medium text-sm">Fale com a Ana</span>
           </motion.button>
         )}
       </AnimatePresence>
@@ -252,26 +232,26 @@ Ou se preferir, você pode usar o simulador de orçamento aqui no site pra ter u
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            className="fixed bottom-6 right-6 z-50 w-[calc(100%-3rem)] sm:w-[400px] h-[500px] bg-white rounded-2xl shadow-2xl border flex flex-col overflow-hidden"
+            className="fixed bottom-6 right-6 z-50 w-[calc(100%-3rem)] sm:w-[400px] h-[500px] bg-[#0d0d0d] rounded-2xl shadow-2xl border border-white/10 flex flex-col overflow-hidden"
           >
             {/* Header */}
-            <div className="gradient-primary-135 text-white p-4 flex items-center justify-between">
+            <div className="bg-[#1a1a1a] border-b border-white/10 p-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <Avatar className="h-10 w-10 border-2 border-white/30">
-                  <AvatarFallback className="bg-white/20 text-white font-semibold">
+                <Avatar className="h-10 w-10 border border-white/20">
+                  <AvatarFallback className="bg-white/10 text-white font-semibold">
                     A
                   </AvatarFallback>
                 </Avatar>
                 <div>
-                  <p className="font-semibold">Ana • Assistente Virtual</p>
-                  <p className="text-xs opacity-80">BS Developer</p>
+                  <p className="font-semibold text-white text-sm">Ana • Assistente Virtual</p>
+                  <p className="text-xs text-muted-foreground">BS Developer</p>
                 </div>
               </div>
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={() => setIsOpen(false)}
-                className="text-white hover:bg-white/20"
+                className="text-muted-foreground hover:text-white hover:bg-white/10"
               >
                 <X className="h-5 w-5" />
               </Button>
@@ -288,13 +268,13 @@ Ou se preferir, você pode usar o simulador de orçamento aqui no site pra ter u
                     }`}
                   >
                     <div
-                      className={`max-w-[85%] rounded-2xl px-4 py-2 ${
+                      className={`max-w-[85%] rounded-2xl px-4 py-3 ${
                         message.role === "user"
-                          ? "bg-primary text-white rounded-br-md"
-                          : "bg-muted rounded-bl-md"
+                          ? "bg-white/10 text-white rounded-br-md"
+                          : "bg-[#1a1a1a] border border-white/10 text-white/90 rounded-bl-md"
                       }`}
                     >
-                      <p className="text-sm whitespace-pre-wrap">
+                      <p className="text-sm whitespace-pre-wrap leading-relaxed">
                         {message.content}
                       </p>
                     </div>
@@ -303,7 +283,7 @@ Ou se preferir, você pode usar o simulador de orçamento aqui no site pra ter u
 
                 {isLoading && (
                   <div className="flex justify-start">
-                    <div className="bg-muted rounded-2xl rounded-bl-md px-4 py-3">
+                    <div className="bg-[#1a1a1a] border border-white/10 rounded-2xl rounded-bl-md px-4 py-3">
                       <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
                     </div>
                   </div>
@@ -313,12 +293,12 @@ Ou se preferir, você pode usar o simulador de orçamento aqui no site pra ter u
 
             {/* Quick Action */}
             {messages.length > 2 && (
-              <div className="px-4 py-2 border-t">
+              <div className="px-4 py-2 border-t border-white/10">
                 <Button
-                  variant="outline"
+                  variant="ghost"
                   size="sm"
                   onClick={handleWhatsAppRedirect}
-                  className="w-full gap-2 text-green-600 border-green-200 hover:bg-green-50"
+                  className="w-full gap-2 text-green-400 hover:text-green-300 hover:bg-green-500/10 border border-green-500/20"
                 >
                   <MessageCircle className="h-4 w-4" />
                   Continuar no WhatsApp
@@ -327,22 +307,22 @@ Ou se preferir, você pode usar o simulador de orçamento aqui no site pra ter u
             )}
 
             {/* Input */}
-            <div className="p-4 border-t">
+            <div className="p-4 border-t border-white/10">
               <div className="flex gap-2">
                 <Input
                   ref={inputRef}
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
-                  onKeyPress={handleKeyPress}
+                  onKeyDown={handleKeyPress}
                   placeholder="Digite sua mensagem..."
                   disabled={isLoading}
-                  className="flex-1"
+                  className="flex-1 bg-white/5 border-white/10 text-white placeholder:text-muted-foreground focus:border-white/30"
                 />
                 <Button
                   onClick={sendMessage}
                   disabled={!input.trim() || isLoading}
                   size="icon"
-                  className="gradient-primary-135 text-white"
+                  className="btn-silver"
                 >
                   <Send className="h-4 w-4" />
                 </Button>

@@ -9,10 +9,9 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 const navItems = [
-  { href: "#projetos", label: "Projetos" },
-  { href: "#sobre", label: "Sobre" },
-  { href: "#orcamento", label: "Orçamento" },
-  { href: "#contato", label: "Contato" },
+  { href: "#resultados", label: "Resultados" },
+  { href: "#solucoes", label: "Soluções" },
+  { href: "#qualificar", label: "Qualificar" },
 ];
 
 export function Header() {
@@ -21,7 +20,7 @@ export function Header() {
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
+      setIsScrolled(window.scrollY > 50);
     };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
@@ -40,51 +39,51 @@ export function Header() {
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.5 }}
-      className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
+      className={`fixed top-0 left-0 right-0 z-40 transition-all duration-500 ${
         isScrolled
-          ? "bg-white/95 backdrop-blur-md shadow-md"
+          ? "bg-black/90 backdrop-blur-md border-b border-white/5"
           : "bg-transparent"
       }`}
     >
       <div className="container mx-auto px-4">
         <nav className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2">
+          <Link href="/" className="flex items-center">
             <Image
               src="/image/logo.png"
               alt="BS Developer"
-              width={180}
-              height={50}
-              className="h-12 md:h-14 w-auto"
+              width={160}
+              height={45}
+              className="h-10 md:h-12 w-auto"
               priority
             />
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-8">
+          <div className="hidden md:flex items-center gap-10">
             {navItems.map((item) => (
               <button
                 key={item.href}
                 onClick={() => scrollToSection(item.href)}
-                className={`font-medium transition-colors hover:text-primary-teal ${
-                  isScrolled ? "text-foreground" : "text-foreground"
-                }`}
+                className="text-sm font-medium text-muted-foreground hover:text-white transition-colors uppercase tracking-wider"
               >
                 {item.label}
               </button>
             ))}
+
             <Button
-              onClick={() => scrollToSection("#orcamento")}
-              className="gradient-primary-135 text-white hover:opacity-90"
+              onClick={() => scrollToSection("#qualificar")}
+              className="btn-silver px-6 py-2 text-sm uppercase tracking-widest"
             >
-              Fazer Orçamento
+              Qualificar Projeto
             </Button>
+
             {/* Botão Admin discreto */}
             <Link href="/login">
               <Button
                 variant="ghost"
                 size="icon"
-                className="opacity-50 hover:opacity-100 transition-opacity"
+                className="opacity-30 hover:opacity-100 transition-opacity"
                 title="Área Admin"
               >
                 <LogIn className="h-4 w-4" />
@@ -95,32 +94,42 @@ export function Header() {
           {/* Mobile Menu */}
           <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
             <SheetTrigger asChild className="md:hidden">
-              <Button variant="ghost" size="icon">
+              <Button variant="ghost" size="icon" className="text-white">
                 <Menu className="h-6 w-6" />
                 <span className="sr-only">Menu</span>
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-[300px] sm:w-[400px]">
-              <nav className="flex flex-col gap-4 mt-8">
+            <SheetContent
+              side="right"
+              className="w-[300px] bg-black/95 border-l border-white/10"
+            >
+              <nav className="flex flex-col gap-6 mt-12">
                 {navItems.map((item) => (
                   <button
                     key={item.href}
                     onClick={() => scrollToSection(item.href)}
-                    className="text-lg font-medium py-2 text-left hover:text-primary-teal transition-colors"
+                    className="text-lg font-medium text-white/70 hover:text-white transition-colors text-left uppercase tracking-wider"
                   >
                     {item.label}
                   </button>
                 ))}
+
+                <div className="h-px bg-white/10 my-4" />
+
                 <Button
-                  onClick={() => scrollToSection("#orcamento")}
-                  className="gradient-primary-135 text-white mt-4"
+                  onClick={() => scrollToSection("#qualificar")}
+                  className="btn-silver w-full py-6 text-sm uppercase tracking-widest"
                 >
-                  Fazer Orçamento
+                  Qualificar Projeto
                 </Button>
+
                 {/* Link Admin no mobile */}
                 <Link href="/login" className="mt-4">
-                  <Button variant="outline" className="w-full gap-2 opacity-70">
-                    <LogIn className="h-4 w-4" />
+                  <Button
+                    variant="ghost"
+                    className="w-full text-white/50 hover:text-white"
+                  >
+                    <LogIn className="h-4 w-4 mr-2" />
                     Área Admin
                   </Button>
                 </Link>
