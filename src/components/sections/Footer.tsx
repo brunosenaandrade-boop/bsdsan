@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Instagram, Linkedin, Github, MapPin, Mail, Phone, Building2 } from "lucide-react";
+import { Instagram, Linkedin, Github, MapPin, Mail, Phone, Building2, Target } from "lucide-react";
 
 const socialLinks = [
   {
@@ -40,6 +40,7 @@ const companyInfo = {
     email: "sac@bsdeveloper.com.br",
   },
   desde: 2016,
+  missao: "Transformar ideias em soluções digitais que geram resultados reais. Desenvolvemos sites, sistemas e aplicativos sob medida para PMEs e empreendedores que buscam crescimento sustentável através da tecnologia.",
 };
 
 export function Footer() {
@@ -51,6 +52,17 @@ export function Footer() {
       <div className="absolute top-0 left-0 right-0 h-px line-gradient" />
 
       <div className="container mx-auto px-4">
+        {/* Nossa Missão */}
+        <div className="text-center mb-12 pb-8 border-b border-white/10">
+          <h3 className="text-white font-semibold mb-4 flex items-center justify-center gap-2">
+            <Target className="h-5 w-5 text-primary-teal" />
+            Nossa Missão
+          </h3>
+          <p className="text-muted-foreground max-w-2xl mx-auto text-sm leading-relaxed">
+            {companyInfo.missao}
+          </p>
+        </div>
+
         {/* Grid principal */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
           {/* Coluna 1 - Logo e Tagline */}
