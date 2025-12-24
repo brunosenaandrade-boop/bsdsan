@@ -19,6 +19,9 @@ const inter = Inter({
 export const metadata: Metadata = {
   metadataBase: new URL("https://bsdeveloper.com.br"),
   title: "BS Developer | Desenvolvimento Web & SaaS",
+  other: {
+    "facebook-domain-verification": "91kvbh8haxg364r20i3wy5akxq869c",
+  },
   description:
     "Transformo ideias em negócios digitais lucrativos. Landing pages, sistemas web, SaaS e apps mobile para PMEs e empreendedores. Desenvolvimento sob demanda com entrega em 7-30 dias.",
   keywords: [
