@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { ExternalLink, ArrowRight } from "lucide-react";
+import { ExternalLink, ArrowRight, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -103,52 +103,54 @@ function CaseCard({
       initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      transition={{ duration: 0.6, delay: index * 0.1 }}
+      transition={{ duration: 0.6, delay: index * 0.15 }}
       className="group"
     >
-      <div className="card-premium overflow-hidden card-hover">
-        {/* Image */}
-        <div className="relative aspect-video overflow-hidden">
+      <div className="border-gradient-animated overflow-hidden card-3d glow-box">
+        {/* Image com overlay premium */}
+        <div className="relative aspect-video overflow-hidden img-overlay-premium">
           <Image
             src={study.image}
             alt={study.title}
             fill
-            className="object-cover object-top transition-transform duration-700 group-hover:scale-105"
+            className="object-cover object-top"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
 
-          {/* Category badge */}
-          <div className="absolute top-4 left-4">
-            <span className="px-3 py-1 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full text-xs text-white uppercase tracking-wider">
+          {/* Shimmer effect overlay */}
+          <div className="absolute inset-0 shimmer-hover" />
+
+          {/* Category badge com glow */}
+          <div className="absolute top-4 left-4 z-10">
+            <span className="badge-cyan px-3 py-1.5 rounded-full text-xs uppercase tracking-wider font-medium">
               {study.category}
             </span>
           </div>
 
           {/* Result overlay */}
-          <div className="absolute bottom-4 left-4 right-4">
-            <div className="text-2xl font-bold text-white mb-1">
+          <div className="absolute bottom-4 left-4 right-4 z-10">
+            <div className="text-2xl font-bold text-white mb-1 text-glow">
               {study.result}
             </div>
-            <div className="text-sm text-white/70">{study.resultDetail}</div>
+            <div className="text-sm text-white/80">{study.resultDetail}</div>
           </div>
         </div>
 
         {/* Content */}
-        <div className="p-6">
-          <h3 className="text-xl font-semibold text-white mb-2">
+        <div className="p-6 bg-gradient-to-b from-transparent to-black/20">
+          <h3 className="text-xl font-semibold text-white mb-2 group-hover:text-gradient-cyan transition-all duration-300">
             {study.title}
           </h3>
 
           <p className="text-muted-foreground text-sm mb-4">
-            <span className="text-white/70">Foco:</span> {study.focus}
+            <span className="text-cyan-400/80">Foco:</span> {study.focus}
           </p>
 
-          {/* Quick metrics */}
-          <div className="flex gap-4 mb-6">
+          {/* Quick metrics com glass */}
+          <div className="flex gap-3 mb-6">
             {study.metrics.slice(0, 2).map((metric, i) => (
-              <div key={i} className="flex-1">
-                <div className="text-lg font-semibold text-white">
+              <div key={i} className="flex-1 glass-light rounded-lg p-3 text-center">
+                <div className="text-lg font-bold metric-value">
                   {metric.value}
                 </div>
                 <div className="text-xs text-muted-foreground">
@@ -163,7 +165,7 @@ function CaseCard({
             <Button
               onClick={() => onOpenDetails(study)}
               variant="ghost"
-              className="flex-1 text-white/70 hover:text-white hover:bg-white/5 border border-white/10"
+              className="flex-1 btn-premium-glow text-white rounded-lg"
             >
               Ver Case Completo
             </Button>
@@ -172,7 +174,7 @@ function CaseCard({
                 onClick={() => window.open(study.liveUrl, "_blank")}
                 variant="ghost"
                 size="icon"
-                className="text-white/70 hover:text-white border border-white/10"
+                className="text-cyan-400 hover:text-cyan-300 border border-cyan-500/20 hover:border-cyan-500/40 hover:bg-cyan-500/10 rounded-lg"
               >
                 <ExternalLink className="h-4 w-4" />
               </Button>
@@ -197,20 +199,20 @@ function CaseModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto bg-[#0d0d0d] border-white/10">
+      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto glass border-white/10 rounded-2xl">
         <DialogHeader>
           <div className="flex items-center gap-3 mb-2">
-            <span className="px-3 py-1 bg-white/10 border border-white/20 rounded-full text-xs text-white uppercase tracking-wider">
+            <span className="badge-cyan px-3 py-1.5 rounded-full text-xs uppercase tracking-wider font-medium">
               {study.category}
             </span>
           </div>
-          <DialogTitle className="text-2xl text-white">
+          <DialogTitle className="text-2xl text-gradient-cyan font-bold">
             {study.title}
           </DialogTitle>
         </DialogHeader>
 
-        {/* Image */}
-        <div className="relative aspect-video rounded-lg overflow-hidden mb-6">
+        {/* Image com overlay */}
+        <div className="relative aspect-video rounded-xl overflow-hidden mb-6 glow-box-cyan">
           <Image
             src={study.image}
             alt={study.title}
@@ -218,16 +220,17 @@ function CaseModal({
             className="object-cover object-top"
             sizes="800px"
           />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
         </div>
 
-        {/* Metrics grid */}
+        {/* Metrics grid com glass */}
         <div className="grid grid-cols-3 gap-4 mb-6">
           {study.metrics.map((metric, i) => (
             <div
               key={i}
-              className="text-center p-4 bg-white/5 border border-white/10 rounded-lg"
+              className="text-center p-4 glass-light rounded-xl border border-cyan-500/10 hover-scale"
             >
-              <div className="text-2xl font-bold text-white mb-1">
+              <div className="text-2xl font-bold metric-value mb-1">
                 {metric.value}
               </div>
               <div className="text-xs text-muted-foreground uppercase tracking-wider">
@@ -238,18 +241,18 @@ function CaseModal({
         </div>
 
         {/* Description */}
-        <p className="text-muted-foreground mb-6">{study.description}</p>
+        <p className="text-muted-foreground mb-6 leading-relaxed">{study.description}</p>
 
         {/* Technologies */}
         <div className="mb-6">
-          <h4 className="text-sm font-medium text-white/70 uppercase tracking-wider mb-3">
+          <h4 className="text-sm font-medium text-cyan-400/80 uppercase tracking-wider mb-3">
             Stack Tecnológico
           </h4>
           <div className="flex flex-wrap gap-2">
             {study.technologies.map((tech) => (
               <span
                 key={tech}
-                className="px-3 py-1 bg-white/5 border border-white/10 rounded-full text-sm text-white/80"
+                className="badge-premium px-3 py-1.5 rounded-lg text-sm text-white/90"
               >
                 {tech}
               </span>
@@ -262,7 +265,7 @@ function CaseModal({
           {study.liveUrl && (
             <Button
               onClick={() => window.open(study.liveUrl, "_blank")}
-              className="btn-silver gap-2"
+              className="btn-cta-cyan gap-2 rounded-lg"
             >
               <ExternalLink className="h-4 w-4" />
               Ver Projeto ao Vivo
@@ -273,7 +276,7 @@ function CaseModal({
             onClick={() =>
               openWhatsApp({ type: "project", projectName: study.title })
             }
-            className="text-white/70 hover:text-white border border-white/10"
+            className="btn-premium-glow text-white rounded-lg"
           >
             Quero Algo Similar
           </Button>
@@ -298,11 +301,21 @@ export function Results() {
   };
 
   return (
-    <section id="resultados" className="relative py-24 md:py-32 section-dark">
-      {/* Linha decorativa superior */}
-      <div className="absolute top-0 left-0 right-0 h-px line-gradient" />
+    <section id="resultados" className="relative py-24 md:py-32 overflow-hidden">
+      {/* Background */}
+      <div className="absolute inset-0 section-dark" />
 
-      <div className="container mx-auto px-4">
+      {/* Grid pattern */}
+      <div className="absolute inset-0 bg-grid-pattern opacity-20" />
+
+      {/* Orbs decorativos */}
+      <div className="orb orb-cyan w-[500px] h-[500px] top-1/4 -left-[200px] opacity-15" />
+      <div className="orb orb-silver w-[400px] h-[400px] bottom-0 -right-[150px] opacity-20" />
+
+      {/* Linha decorativa superior */}
+      <div className="absolute top-0 left-0 right-0 h-px divider-glow" />
+
+      <div className="container mx-auto px-4 relative z-10">
         {/* Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -310,12 +323,20 @@ export function Results() {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <h2 className="text-2xl md:text-4xl font-bold text-white mb-4">
-            INVESTIMENTO COM RETORNO COMPROVADO.
+          {/* Badge */}
+          <div className="flex justify-center mb-6">
+            <div className="badge-cyan px-4 py-2 rounded-full text-sm font-medium flex items-center gap-2">
+              <TrendingUp className="h-4 w-4" />
+              Cases de Sucesso
+            </div>
+          </div>
+
+          <h2 className="text-2xl md:text-4xl lg:text-5xl font-bold text-white mb-4">
+            <span className="text-glow">INVESTIMENTO COM RETORNO COMPROVADO.</span>
             <br />
-            <span className="text-metallic">VEJA OS RESULTADOS.</span>
+            <span className="text-gradient-cyan">VEJA OS RESULTADOS.</span>
           </h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
             Cada projeto é um case de negócio, não apenas código.
           </p>
         </motion.div>
@@ -344,7 +365,7 @@ export function Results() {
               const el = document.getElementById("qualificar");
               el?.scrollIntoView({ behavior: "smooth" });
             }}
-            className="btn-silver px-8 py-6 text-base uppercase tracking-widest group"
+            className="btn-cta-cyan px-8 py-6 text-base uppercase tracking-widest group rounded-lg"
           >
             Quero Resultados Assim
             <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
@@ -360,7 +381,7 @@ export function Results() {
       />
 
       {/* Linha decorativa inferior */}
-      <div className="absolute bottom-0 left-0 right-0 h-px line-gradient" />
+      <div className="absolute bottom-0 left-0 right-0 h-px divider-glow" />
     </section>
   );
 }
