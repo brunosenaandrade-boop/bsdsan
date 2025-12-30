@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef } from 'react';
-import { useRouter } from 'next/navigation';
+// import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -43,7 +43,7 @@ const etapas = [
 ];
 
 export default function CredenciamentoPage() {
-  const router = useRouter();
+  // const router = useRouter();
   const { cadastrarAnalista } = useBSDSANStore();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isDrawing, setIsDrawing] = useState(false);

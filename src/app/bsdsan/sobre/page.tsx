@@ -84,7 +84,7 @@ export default function SobrePage() {
                 { icon: Users, label: 'Colaboradores', value: '+25' },
                 { icon: Globe, label: 'Estados Atendidos', value: '15' },
                 { icon: Award, label: 'Certificações', value: '+500' },
-              ].map((item, index) => (
+              ].map((item) => (
                 <div
                   key={item.label}
                   className="bg-[#0a0f1a] border border-[#1e3a5f]/30 rounded-lg p-6 text-center"
@@ -210,10 +210,10 @@ export default function SobrePage() {
                   </p>
 
                   <blockquote className="text-[#8ba3c7] leading-relaxed italic border-l-2 border-[#c9a227]/50 pl-4 mb-6">
-                    "Nossa missão é clara: garantir que cada sistema digital desenvolvido
+                    &quot;Nossa missão é clara: garantir que cada sistema digital desenvolvido
                     sob nossa certificação não apenas funcione, mas supere todas as
                     expectativas de qualidade e performance. Excelência não é um
-                    objetivo — é nosso padrão mínimo."
+                    objetivo — é nosso padrão mínimo.&quot;
                   </blockquote>
 
                   <div className="space-y-3 text-sm text-[#6b7c95] mb-8">

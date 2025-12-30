@@ -10,7 +10,6 @@ import {
   Clock,
   AlertTriangle,
   TrendingUp,
-  ArrowRight,
   Plus,
   UserCheck,
   Bug,

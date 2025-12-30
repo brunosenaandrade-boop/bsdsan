@@ -4,10 +4,7 @@ import { useState } from 'react';
 import { useBSDSANStore } from '@/lib/bsdsan/store';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  ClipboardList,
-  Calendar,
   Clock,
-  AlertTriangle,
   CheckCircle,
   ExternalLink,
   ChevronRight,
@@ -389,7 +386,7 @@ export default function MissoesPage() {
                     <label className="block text-sm text-[#8ba3c7] mb-2">Tipo</label>
                     <select
                       value={novaOcorrencia.tipo}
-                      onChange={(e) => setNovaOcorrencia({ ...novaOcorrencia, tipo: e.target.value as any })}
+                      onChange={(e) => setNovaOcorrencia({ ...novaOcorrencia, tipo: e.target.value as 'bug' | 'melhoria' | 'duvida' | 'outro' })}
                       className="w-full bg-[#060a12] border border-[#1e3a5f]/50 rounded-lg px-4 py-3 text-white"
                     >
                       <option value="bug">Bug</option>
@@ -402,7 +399,7 @@ export default function MissoesPage() {
                     <label className="block text-sm text-[#8ba3c7] mb-2">Gravidade</label>
                     <select
                       value={novaOcorrencia.gravidade}
-                      onChange={(e) => setNovaOcorrencia({ ...novaOcorrencia, gravidade: e.target.value as any })}
+                      onChange={(e) => setNovaOcorrencia({ ...novaOcorrencia, gravidade: e.target.value as 'baixa' | 'media' | 'alta' | 'critica' })}
                       className="w-full bg-[#060a12] border border-[#1e3a5f]/50 rounded-lg px-4 py-3 text-white"
                     >
                       <option value="baixa">Baixa</option>

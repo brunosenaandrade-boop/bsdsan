@@ -6,8 +6,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   MessageSquare,
   Send,
-  Users,
-  User,
   Clock,
   CheckCircle,
   AlertTriangle,
@@ -246,7 +244,7 @@ export default function ComunicadosPage() {
                             key={tipo.value}
                             type="button"
                             onClick={() =>
-                              setNovoComunicado({ ...novoComunicado, tipo: tipo.value as any })
+                              setNovoComunicado({ ...novoComunicado, tipo: tipo.value as 'informativo' | 'importante' | 'urgente' })
                             }
                             className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-lg border transition-colors ${
                               novoComunicado.tipo === tipo.value

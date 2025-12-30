@@ -1,9 +1,8 @@
 'use client';
 
-import { useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useBSDSANStore } from '@/lib/bsdsan/store';
-import { FileText, Printer, Download, ArrowLeft } from 'lucide-react';
+import { FileText, Printer, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 
 export default function DocumentosPage() {

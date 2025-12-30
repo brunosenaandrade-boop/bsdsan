@@ -6,19 +6,14 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Users,
   Search,
-  CheckCircle,
-  XCircle,
-  Clock,
   Mail,
   Phone,
   MapPin,
   GraduationCap,
   Calendar,
   Shield,
-  X,
   UserCheck,
   UserX,
-  AlertTriangle,
 } from 'lucide-react';
 
 export default function AnalistasPage() {
@@ -110,7 +105,7 @@ export default function AnalistasPage() {
           ].map((f) => (
             <button
               key={f.value}
-              onClick={() => setFiltro(f.value as any)}
+              onClick={() => setFiltro(f.value as 'todos' | 'ativos' | 'pendentes' | 'inativos')}
               className={`px-4 py-2 rounded-lg text-sm transition-colors ${
                 filtro === f.value
                   ? 'bg-red-500/20 text-red-400 border border-red-500/30'

@@ -10,7 +10,6 @@ export default function DocumentosAnalistaPage() {
   if (!analistaLogado) return null;
 
   const missoes = getMissoesAnalista(analistaLogado.id);
-  const missoesConcluidas = missoes.filter((m) => m.status === 'concluida');
 
   const formatarData = (data: string) => {
     return new Date(data).toLocaleDateString('pt-BR', {

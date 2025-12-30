@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { Shield, Award, Users, BarChart3, CheckCircle, ArrowRight, Lock, FileCheck, Globe } from 'lucide-react';
+import { Shield, Award, Users, BarChart3, ArrowRight, Lock, FileCheck, Globe } from 'lucide-react';
 import BSDSANHeader from '@/components/bsdsan/Header';
 import BSDSANFooter from '@/components/bsdsan/Footer';
 

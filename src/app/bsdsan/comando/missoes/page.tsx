@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useBSDSANStore } from '@/lib/bsdsan/store';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -11,13 +11,10 @@ import {
   Calendar,
   User,
   CheckCircle,
-  Clock,
   AlertTriangle,
   X,
   Send,
   Loader2,
-  FileText,
-  Printer,
 } from 'lucide-react';
 
 export default function MissoesAdminPage() {
@@ -173,7 +170,7 @@ export default function MissoesAdminPage() {
           ].map((f) => (
             <button
               key={f.value}
-              onClick={() => setFiltro(f.value as any)}
+              onClick={() => setFiltro(f.value as 'todas' | 'pendentes' | 'andamento' | 'concluidas')}
               className={`px-4 py-2 rounded-lg text-sm whitespace-nowrap transition-colors ${
                 filtro === f.value
                   ? 'bg-red-500/20 text-red-400 border border-red-500/30'
@@ -397,7 +394,7 @@ export default function MissoesAdminPage() {
                           onChange={(e) =>
                             setNovaMissao({
                               ...novaMissao,
-                              classificacao: e.target.value as any,
+                              classificacao: e.target.value as 'normal' | 'prioritaria' | 'urgente',
                             })
                           }
                           className="w-full bg-[#060a12] border border-[#1e3a5f]/50 rounded-lg px-4 py-3 text-white"

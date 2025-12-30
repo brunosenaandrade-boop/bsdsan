@@ -13,7 +13,6 @@ import {
   User,
   LogOut,
   Bell,
-  ChevronDown,
 } from 'lucide-react';
 
 const menuItems = [
