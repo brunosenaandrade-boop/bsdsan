@@ -1,11 +1,12 @@
 'use client';
 
+import { Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useBSDSANStore } from '@/lib/bsdsan/store';
 import { FileText, Printer, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 
-export default function DocumentosPage() {
+function DocumentosContent() {
   const searchParams = useSearchParams();
   const tipo = searchParams.get('tipo');
   const id = searchParams.get('id');
@@ -486,5 +487,21 @@ export default function DocumentosPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+function LoadingFallback() {
+  return (
+    <div className="min-h-screen bg-[#0a0f1a] flex items-center justify-center">
+      <div className="animate-spin w-8 h-8 border-2 border-[#c9a227] border-t-transparent rounded-full" />
+    </div>
+  );
+}
+
+export default function DocumentosPage() {
+  return (
+    <Suspense fallback={<LoadingFallback />}>
+      <DocumentosContent />
+    </Suspense>
   );
 }
