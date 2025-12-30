@@ -1,10 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Shield,
-  Clock,
   ChevronRight,
   ChevronLeft,
   CheckCircle,
@@ -359,8 +358,8 @@ export default function AvaliacaoPage() {
         respostaSelecionada: r !== null ? questoes[i].opcoes[r] : 'Não respondida',
         indiceResposta: r,
       })),
-      pontuacao: respostas.reduce((acc, r, i) => {
-        return acc + (r === questoes[i].correta ? 1 : 0);
+      pontuacao: respostas.reduce((acc: number, r, i) => {
+        return acc + (r !== null && r === questoes[i].correta ? 1 : 0);
       }, 0),
       totalQuestoes: questoes.length,
     };
