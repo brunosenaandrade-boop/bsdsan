@@ -174,10 +174,13 @@ export default function CredenciamentoPage() {
     setFormData((prev) => ({ ...prev, assinatura: '' }));
   };
 
+  const [erroEnvio, setErroEnvio] = useState('');
+
   const handleSubmit = async () => {
     if (!validarEtapa()) return;
 
     setEnviando(true);
+    setErroEnvio('');
 
     try {
       // Cadastrar analista na API
@@ -193,11 +196,14 @@ export default function CredenciamentoPage() {
         termosAceitos: true,
       });
 
-      setCodigoGerado(novoAnalista.codigo);
+      // Usar código retornado ou gerar um
+      const codigo = novoAnalista?.codigo || `BSDSAN-${Date.now().toString(36).toUpperCase()}`;
+      setCodigoGerado(codigo);
       setEnviando(false);
       setConcluido(true);
     } catch (error) {
       console.error('Erro ao cadastrar:', error);
+      setErroEnvio('Ocorreu um erro ao enviar. Por favor, tente novamente.');
       setEnviando(false);
     }
   };
@@ -748,24 +754,29 @@ export default function CredenciamentoPage() {
                 <ArrowRight className="w-5 h-5" />
               </button>
             ) : (
-              <button
-                type="button"
-                onClick={handleSubmit}
-                disabled={enviando}
-                className="flex items-center gap-2 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white px-8 py-3 rounded font-semibold hover:from-emerald-400 hover:to-emerald-500 transition-all disabled:opacity-50"
-              >
-                {enviando ? (
-                  <>
-                    <Loader2 className="w-5 h-5 animate-spin" />
-                    Enviando...
-                  </>
-                ) : (
-                  <>
-                    <CheckCircle className="w-5 h-5" />
-                    Finalizar Cadastro
-                  </>
+              <div className="flex flex-col items-end gap-2">
+                {erroEnvio && (
+                  <p className="text-sm text-red-400">{erroEnvio}</p>
                 )}
-              </button>
+                <button
+                  type="button"
+                  onClick={handleSubmit}
+                  disabled={enviando}
+                  className="flex items-center gap-2 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white px-8 py-3 rounded font-semibold hover:from-emerald-400 hover:to-emerald-500 transition-all disabled:opacity-50"
+                >
+                  {enviando ? (
+                    <>
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                      Enviando...
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle className="w-5 h-5" />
+                      Finalizar Cadastro
+                    </>
+                  )}
+                </button>
+              </div>
             )}
           </div>
         </div>

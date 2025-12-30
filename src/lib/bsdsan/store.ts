@@ -120,10 +120,16 @@ export const useBSDSANStore = create<BSDSANStore>()(
       cadastrarAnalista: async (dados) => {
         set({ loading: true });
         try {
+          // Gerar código e matrícula localmente
+          const codigo = `BSDSAN-${Date.now().toString(36).toUpperCase()}`;
+          const matricula = `AQ-${new Date().getFullYear()}-${Math.floor(Math.random() * 9000) + 1000}`;
+
           const result = await apiRequest({
             action: 'create',
             sheet: 'analistas',
             data: JSON.stringify({
+              codigo,
+              matricula,
               nome: dados.nome || '',
               email: dados.email || '',
               cpf: dados.cpf || '',
@@ -132,10 +138,31 @@ export const useBSDSANStore = create<BSDSANStore>()(
               formacao: dados.formacao || '',
               experiencia: dados.experiencia || '',
               assinatura: dados.assinaturaDigital || '',
+              status: 'pendente',
+              nivel: 'I',
+              dataCadastro: new Date().toISOString(),
+              termosAceitos: true,
             }),
           });
 
-          const novoAnalista = result as Analista;
+          // Usar dados retornados ou criar objeto local
+          const novoAnalista: Analista = (result as Analista)?.id ? (result as Analista) : {
+            id: `local-${Date.now()}`,
+            codigo,
+            matricula,
+            nome: dados.nome || '',
+            email: dados.email || '',
+            cpf: dados.cpf,
+            telefone: dados.telefone,
+            endereco: dados.endereco,
+            formacao: dados.formacao,
+            experiencia: dados.experiencia,
+            assinaturaDigital: dados.assinaturaDigital,
+            status: 'pendente',
+            nivel: 'I',
+            dataCadastro: new Date().toISOString(),
+            termosAceitos: true,
+          };
 
           set((state) => ({
             analistas: [...state.analistas, novoAnalista],
