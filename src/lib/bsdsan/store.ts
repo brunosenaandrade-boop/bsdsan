@@ -131,7 +131,6 @@ export const useBSDSANStore = create<BSDSANStore>()(
               endereco: dados.endereco || '',
               formacao: dados.formacao || '',
               experiencia: dados.experiencia || '',
-              motivacao: dados.motivacao || '',
               assinatura: dados.assinaturaDigital || '',
             }),
           });
