@@ -339,8 +339,6 @@ export const useBSDSANStore = create<BSDSANStore>()(
               titulo: dados.titulo,
               descricao: dados.descricao,
               passos: dados.passos,
-              resultadoEsperado: dados.resultadoEsperado,
-              resultadoObtido: dados.resultadoObtido,
               evidencia: dados.evidencia,
             }),
           });
