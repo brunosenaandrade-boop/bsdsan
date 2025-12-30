@@ -1,0 +1,26 @@
+{
+  "redirects": [
+    {
+      "source": "/",
+      "destination": "/bsdsan",
+      "permanent": false,
+      "has": [
+        {
+          "type": "host",
+          "value": "bsdsan.vercel.app"
+        }
+      ]
+    },
+    {
+      "source": "/",
+      "destination": "/bsdsan",
+      "permanent": false,
+      "has": [
+        {
+          "type": "host",
+          "value": "bsdsan.bsdeveloper.com.br"
+        }
+      ]
+    }
+  ]
+}
