@@ -25,7 +25,11 @@ const menuItems = [
 
 export default function PortalLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
-  const { analistaLogado, logoutAnalista, getComunicadosAnalista } = useBSDSANStore();
+  const { analistaLogado, logoutAnalista, getComunicadosAnalista, inicializar } = useBSDSANStore();
+
+  useEffect(() => {
+    inicializar();
+  }, [inicializar]);
 
   useEffect(() => {
     if (!analistaLogado) {

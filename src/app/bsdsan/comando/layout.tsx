@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { useBSDSANStore } from '@/lib/bsdsan/store';
@@ -29,7 +29,11 @@ const menuItems = [
 export default function ComandoLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
-  const { adminLogado, loginAdmin, logoutAdmin } = useBSDSANStore();
+  const { adminLogado, loginAdmin, logoutAdmin, inicializar } = useBSDSANStore();
+
+  useEffect(() => {
+    inicializar();
+  }, [inicializar]);
 
   const [senha, setSenha] = useState('');
   const [erro, setErro] = useState('');

@@ -4,62 +4,51 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { Analista, Missao, Comunicado, Ocorrencia } from './types';
 
-// Gera código de acesso único
-function gerarCodigo(): string {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-  let codigo = 'BSDSAN-';
-  for (let i = 0; i < 8; i++) {
-    codigo += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return codigo;
-}
+// API do Google Sheets
+const API_URL = 'https://script.google.com/macros/s/AKfycbyzhyw9u2f2W39Z-Yensav3ie6H2KS_oUqa45bLlgGpJeJgfRAjV3echKfaWSSf6vlUBA/exec';
 
-// Gera matrícula
-function gerarMatricula(): string {
-  const ano = new Date().getFullYear();
-  const num = Math.floor(Math.random() * 9000) + 1000;
-  return `AQ-${ano}-${num}`;
-}
-
-// Gera protocolo
-function gerarProtocolo(): string {
-  const ano = new Date().getFullYear();
-  const num = Math.floor(Math.random() * 9000) + 1000;
-  return `OS-${ano}/${num}`;
+// Função para fazer requisições à API
+async function apiRequest(params: Record<string, string>): Promise<unknown> {
+  const url = new URL(API_URL);
+  Object.entries(params).forEach(([key, value]) => {
+    url.searchParams.append(key, value);
+  });
+  const response = await fetch(url.toString());
+  return response.json();
 }
 
 interface BSDSANStore {
-  // Analistas
+  // Estado
   analistas: Analista[];
   analistaLogado: Analista | null;
-
-  // Missões
   missoes: Missao[];
-
-  // Comunicados
   comunicados: Comunicado[];
-
-  // Admin
   adminLogado: boolean;
+  loading: boolean;
+  initialized: boolean;
+
+  // Inicialização
+  inicializar: () => Promise<void>;
+  recarregar: () => Promise<void>;
 
   // Ações - Analistas
-  cadastrarAnalista: (dados: Partial<Analista>) => Analista;
-  aprovarAnalista: (id: string) => void;
-  loginAnalista: (codigo: string) => Analista | null;
+  cadastrarAnalista: (dados: Partial<Analista>) => Promise<Analista>;
+  aprovarAnalista: (id: string) => Promise<void>;
+  loginAnalista: (codigo: string) => Promise<Analista | null>;
   logoutAnalista: () => void;
-  atualizarAnalista: (id: string, dados: Partial<Analista>) => void;
+  atualizarAnalista: (id: string, dados: Partial<Analista>) => Promise<void>;
 
   // Ações - Missões
-  criarMissao: (dados: Omit<Missao, 'id' | 'protocolo' | 'dataEmissao' | 'status'>) => Missao;
-  atualizarMissao: (id: string, dados: Partial<Missao>) => void;
-  concluirMissao: (id: string, relatorio: string) => void;
+  criarMissao: (dados: Omit<Missao, 'id' | 'protocolo' | 'dataEmissao' | 'status' | 'ocorrencias'>) => Promise<Missao>;
+  atualizarMissao: (id: string, dados: Partial<Missao>) => Promise<void>;
+  concluirMissao: (id: string, relatorio: string) => Promise<void>;
 
   // Ações - Ocorrências
-  registrarOcorrencia: (missaoId: string, dados: Omit<Ocorrencia, 'id' | 'missaoId' | 'dataRegistro' | 'status'>) => void;
+  registrarOcorrencia: (missaoId: string, dados: Omit<Ocorrencia, 'id' | 'missaoId' | 'dataRegistro' | 'status'>) => Promise<void>;
 
   // Ações - Comunicados
-  enviarComunicado: (dados: Omit<Comunicado, 'id' | 'dataEnvio' | 'lido'>) => void;
-  marcarComoLido: (id: string) => void;
+  enviarComunicado: (dados: Omit<Comunicado, 'id' | 'dataEnvio' | 'lido'>) => Promise<void>;
+  marcarComoLido: (id: string) => Promise<void>;
 
   // Ações - Admin
   loginAdmin: (senha: string) => boolean;
@@ -86,56 +75,131 @@ export const useBSDSANStore = create<BSDSANStore>()(
       missoes: [],
       comunicados: [],
       adminLogado: false,
+      loading: false,
+      initialized: false,
+
+      // Inicializar - carrega dados do Google Sheets
+      inicializar: async () => {
+        if (get().initialized) return;
+
+        set({ loading: true });
+        try {
+          const [analistas, missoes, comunicados, ocorrencias] = await Promise.all([
+            apiRequest({ action: 'read', sheet: 'analistas' }),
+            apiRequest({ action: 'read', sheet: 'missoes' }),
+            apiRequest({ action: 'read', sheet: 'comunicados' }),
+            apiRequest({ action: 'read', sheet: 'ocorrencias' }),
+          ]);
+
+          // Associar ocorrências às missões
+          const missoesComOcorrencias = (missoes as Missao[]).map((m) => ({
+            ...m,
+            ocorrencias: (ocorrencias as Ocorrencia[]).filter((o) => o.missaoId === m.id),
+          }));
+
+          set({
+            analistas: analistas as Analista[],
+            missoes: missoesComOcorrencias,
+            comunicados: comunicados as Comunicado[],
+            initialized: true,
+            loading: false,
+          });
+        } catch (error) {
+          console.error('Erro ao inicializar:', error);
+          set({ loading: false });
+        }
+      },
+
+      // Recarregar dados
+      recarregar: async () => {
+        set({ initialized: false });
+        await get().inicializar();
+      },
 
       // Cadastrar novo analista
-      cadastrarAnalista: (dados) => {
-        const novoAnalista: Analista = {
-          id: crypto.randomUUID(),
-          codigo: gerarCodigo(),
-          nome: dados.nome || '',
-          email: dados.email || '',
-          cpf: dados.cpf,
-          telefone: dados.telefone,
-          endereco: dados.endereco,
-          formacao: dados.formacao,
-          experiencia: dados.experiencia,
-          foto: dados.foto,
-          matricula: gerarMatricula(),
-          nivel: 'I',
-          status: 'pendente',
-          dataCadastro: new Date().toISOString(),
-          assinaturaDigital: dados.assinaturaDigital,
-          termosAceitos: dados.termosAceitos || false,
-        };
+      cadastrarAnalista: async (dados) => {
+        set({ loading: true });
+        try {
+          const result = await apiRequest({
+            action: 'create',
+            sheet: 'analistas',
+            data: JSON.stringify({
+              nome: dados.nome || '',
+              email: dados.email || '',
+              cpf: dados.cpf || '',
+              telefone: dados.telefone || '',
+              endereco: dados.endereco || '',
+              formacao: dados.formacao || '',
+              experiencia: dados.experiencia || '',
+              motivacao: dados.motivacao || '',
+              assinatura: dados.assinaturaDigital || '',
+            }),
+          });
 
-        set((state) => ({
-          analistas: [...state.analistas, novoAnalista],
-        }));
+          const novoAnalista = result as Analista;
 
-        return novoAnalista;
+          set((state) => ({
+            analistas: [...state.analistas, novoAnalista],
+            loading: false,
+          }));
+
+          return novoAnalista;
+        } catch (error) {
+          console.error('Erro ao cadastrar:', error);
+          set({ loading: false });
+          throw error;
+        }
       },
 
       // Aprovar analista
-      aprovarAnalista: (id) => {
-        set((state) => ({
-          analistas: state.analistas.map((a) =>
-            a.id === id
-              ? { ...a, status: 'ativo', dataCredenciamento: new Date().toISOString() }
-              : a
-          ),
-        }));
+      aprovarAnalista: async (id) => {
+        set({ loading: true });
+        try {
+          await apiRequest({
+            action: 'update',
+            sheet: 'analistas',
+            id,
+            data: JSON.stringify({
+              status: 'ativo',
+              dataCredenciamento: new Date().toISOString(),
+            }),
+          });
+
+          set((state) => ({
+            analistas: state.analistas.map((a) =>
+              a.id === id
+                ? { ...a, status: 'ativo', dataCredenciamento: new Date().toISOString() }
+                : a
+            ),
+            loading: false,
+          }));
+        } catch (error) {
+          console.error('Erro ao aprovar:', error);
+          set({ loading: false });
+        }
       },
 
       // Login do analista
-      loginAnalista: (codigo) => {
-        const analista = get().analistas.find(
-          (a) => a.codigo === codigo && a.status === 'ativo'
-        );
-        if (analista) {
-          set({ analistaLogado: analista });
-          return analista;
+      loginAnalista: async (codigo) => {
+        set({ loading: true });
+        try {
+          const result = await apiRequest({
+            action: 'login',
+            codigo,
+          }) as { success: boolean; analista?: Analista };
+
+          if (result.success && result.analista) {
+            set({ analistaLogado: result.analista, loading: false });
+            return result.analista;
+          }
+
+          set({ loading: false });
+          return null;
+        } catch (error) {
+          console.error('Erro no login:', error);
+          set({ loading: false });
+          return null;
         }
-        return null;
       },
 
       // Logout do analista
@@ -144,106 +208,209 @@ export const useBSDSANStore = create<BSDSANStore>()(
       },
 
       // Atualizar analista
-      atualizarAnalista: (id, dados) => {
-        set((state) => ({
-          analistas: state.analistas.map((a) =>
-            a.id === id ? { ...a, ...dados } : a
-          ),
-          analistaLogado:
-            state.analistaLogado?.id === id
-              ? { ...state.analistaLogado, ...dados }
-              : state.analistaLogado,
-        }));
+      atualizarAnalista: async (id, dados) => {
+        set({ loading: true });
+        try {
+          await apiRequest({
+            action: 'update',
+            sheet: 'analistas',
+            id,
+            data: JSON.stringify(dados),
+          });
+
+          set((state) => ({
+            analistas: state.analistas.map((a) =>
+              a.id === id ? { ...a, ...dados } : a
+            ),
+            analistaLogado:
+              state.analistaLogado?.id === id
+                ? { ...state.analistaLogado, ...dados }
+                : state.analistaLogado,
+            loading: false,
+          }));
+        } catch (error) {
+          console.error('Erro ao atualizar:', error);
+          set({ loading: false });
+        }
       },
 
       // Criar missão
-      criarMissao: (dados) => {
-        const novaMissao: Missao = {
-          ...dados,
-          id: crypto.randomUUID(),
-          protocolo: gerarProtocolo(),
-          dataEmissao: new Date().toISOString(),
-          status: 'pendente',
-          ocorrencias: [],
-        };
+      criarMissao: async (dados) => {
+        set({ loading: true });
+        try {
+          const result = await apiRequest({
+            action: 'create',
+            sheet: 'missoes',
+            data: JSON.stringify({
+              titulo: dados.titulo,
+              descricao: dados.descricao,
+              sistema: dados.sistema,
+              versao: dados.versao,
+              urlSistema: dados.urlSistema,
+              classificacao: dados.classificacao,
+              analistaId: dados.analistaId,
+              dataLimite: dados.dataLimite,
+              instrucoes: Array.isArray(dados.instrucoes) ? dados.instrucoes.join('; ') : dados.instrucoes,
+            }),
+          });
 
-        set((state) => ({
-          missoes: [...state.missoes, novaMissao],
-        }));
+          const novaMissao = { ...(result as Missao), ocorrencias: [] };
 
-        return novaMissao;
+          set((state) => ({
+            missoes: [...state.missoes, novaMissao],
+            loading: false,
+          }));
+
+          return novaMissao;
+        } catch (error) {
+          console.error('Erro ao criar missão:', error);
+          set({ loading: false });
+          throw error;
+        }
       },
 
       // Atualizar missão
-      atualizarMissao: (id, dados) => {
-        set((state) => ({
-          missoes: state.missoes.map((m) =>
-            m.id === id ? { ...m, ...dados } : m
-          ),
-        }));
+      atualizarMissao: async (id, dados) => {
+        set({ loading: true });
+        try {
+          await apiRequest({
+            action: 'update',
+            sheet: 'missoes',
+            id,
+            data: JSON.stringify(dados),
+          });
+
+          set((state) => ({
+            missoes: state.missoes.map((m) =>
+              m.id === id ? { ...m, ...dados } : m
+            ),
+            loading: false,
+          }));
+        } catch (error) {
+          console.error('Erro ao atualizar missão:', error);
+          set({ loading: false });
+        }
       },
 
       // Concluir missão
-      concluirMissao: (id, relatorio) => {
-        set((state) => ({
-          missoes: state.missoes.map((m) =>
-            m.id === id
-              ? {
-                  ...m,
-                  status: 'concluida',
-                  relatorio,
-                  dataConclusao: new Date().toISOString(),
-                }
-              : m
-          ),
-        }));
+      concluirMissao: async (id, relatorio) => {
+        set({ loading: true });
+        try {
+          await apiRequest({
+            action: 'update',
+            sheet: 'missoes',
+            id,
+            data: JSON.stringify({
+              status: 'concluida',
+              relatorioFinal: relatorio,
+              dataConclusao: new Date().toISOString(),
+            }),
+          });
+
+          set((state) => ({
+            missoes: state.missoes.map((m) =>
+              m.id === id
+                ? {
+                    ...m,
+                    status: 'concluida',
+                    relatorio,
+                    dataConclusao: new Date().toISOString(),
+                  }
+                : m
+            ),
+            loading: false,
+          }));
+        } catch (error) {
+          console.error('Erro ao concluir missão:', error);
+          set({ loading: false });
+        }
       },
 
       // Registrar ocorrência
-      registrarOcorrencia: (missaoId, dados) => {
-        const novaOcorrencia: Ocorrencia = {
-          ...dados,
-          id: crypto.randomUUID(),
-          missaoId,
-          dataRegistro: new Date().toISOString(),
-          status: 'aberta',
-        };
+      registrarOcorrencia: async (missaoId, dados) => {
+        set({ loading: true });
+        try {
+          const result = await apiRequest({
+            action: 'create',
+            sheet: 'ocorrencias',
+            data: JSON.stringify({
+              missaoId,
+              tipo: dados.tipo,
+              gravidade: dados.gravidade,
+              titulo: dados.titulo,
+              descricao: dados.descricao,
+              passos: dados.passos,
+              resultadoEsperado: dados.resultadoEsperado,
+              resultadoObtido: dados.resultadoObtido,
+              evidencia: dados.evidencia,
+            }),
+          });
 
-        set((state) => ({
-          missoes: state.missoes.map((m) =>
-            m.id === missaoId
-              ? { ...m, ocorrencias: [...(m.ocorrencias || []), novaOcorrencia] }
-              : m
-          ),
-        }));
+          const novaOcorrencia = result as Ocorrencia;
+
+          set((state) => ({
+            missoes: state.missoes.map((m) =>
+              m.id === missaoId
+                ? { ...m, ocorrencias: [...(m.ocorrencias || []), novaOcorrencia] }
+                : m
+            ),
+            loading: false,
+          }));
+        } catch (error) {
+          console.error('Erro ao registrar ocorrência:', error);
+          set({ loading: false });
+        }
       },
 
       // Enviar comunicado
-      enviarComunicado: (dados) => {
-        const novoComunicado: Comunicado = {
-          ...dados,
-          id: crypto.randomUUID(),
-          dataEnvio: new Date().toISOString(),
-          lido: false,
-        };
+      enviarComunicado: async (dados) => {
+        set({ loading: true });
+        try {
+          const result = await apiRequest({
+            action: 'create',
+            sheet: 'comunicados',
+            data: JSON.stringify({
+              titulo: dados.titulo,
+              mensagem: dados.mensagem,
+              tipo: dados.tipo,
+              destinatarioId: dados.destinatarioId || '',
+            }),
+          });
 
-        set((state) => ({
-          comunicados: [...state.comunicados, novoComunicado],
-        }));
+          const novoComunicado = result as Comunicado;
+
+          set((state) => ({
+            comunicados: [...state.comunicados, novoComunicado],
+            loading: false,
+          }));
+        } catch (error) {
+          console.error('Erro ao enviar comunicado:', error);
+          set({ loading: false });
+        }
       },
 
       // Marcar comunicado como lido
-      marcarComoLido: (id) => {
-        set((state) => ({
-          comunicados: state.comunicados.map((c) =>
-            c.id === id ? { ...c, lido: true } : c
-          ),
-        }));
+      marcarComoLido: async (id) => {
+        try {
+          await apiRequest({
+            action: 'update',
+            sheet: 'comunicados',
+            id,
+            data: JSON.stringify({ lido: true }),
+          });
+
+          set((state) => ({
+            comunicados: state.comunicados.map((c) =>
+              c.id === id ? { ...c, lido: true } : c
+            ),
+          }));
+        } catch (error) {
+          console.error('Erro ao marcar como lido:', error);
+        }
       },
 
       // Login admin
       loginAdmin: (senha) => {
-        // Senha padrão: bsdsan2024
         if (senha === 'bsdsan2024') {
           set({ adminLogado: true });
           return true;
@@ -288,6 +455,10 @@ export const useBSDSANStore = create<BSDSANStore>()(
     }),
     {
       name: 'bsdsan-storage',
+      partialize: (state) => ({
+        analistaLogado: state.analistaLogado,
+        adminLogado: state.adminLogado,
+      }),
     }
   )
 );

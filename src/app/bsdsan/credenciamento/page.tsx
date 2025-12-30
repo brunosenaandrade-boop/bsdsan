@@ -1,7 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
-// import { useRouter } from 'next/navigation';
+import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -43,10 +42,13 @@ const etapas = [
 ];
 
 export default function CredenciamentoPage() {
-  // const router = useRouter();
-  const { cadastrarAnalista } = useBSDSANStore();
+  const { cadastrarAnalista, inicializar } = useBSDSANStore();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isDrawing, setIsDrawing] = useState(false);
+
+  useEffect(() => {
+    inicializar();
+  }, [inicializar]);
 
   const [etapaAtual, setEtapaAtual] = useState(1);
   const [enviando, setEnviando] = useState(false);
@@ -177,25 +179,27 @@ export default function CredenciamentoPage() {
 
     setEnviando(true);
 
-    // Simular processamento
-    await new Promise((resolve) => setTimeout(resolve, 3000));
+    try {
+      // Cadastrar analista na API
+      const novoAnalista = await cadastrarAnalista({
+        nome: formData.nome,
+        email: formData.email,
+        cpf: formData.cpf,
+        telefone: formData.telefone,
+        endereco: formData.endereco,
+        formacao: formData.formacao,
+        experiencia: formData.experiencia,
+        assinaturaDigital: formData.assinatura,
+        termosAceitos: true,
+      });
 
-    // Cadastrar analista
-    const novoAnalista = cadastrarAnalista({
-      nome: formData.nome,
-      email: formData.email,
-      cpf: formData.cpf,
-      telefone: formData.telefone,
-      endereco: formData.endereco,
-      formacao: formData.formacao,
-      experiencia: formData.experiencia,
-      assinaturaDigital: formData.assinatura,
-      termosAceitos: true,
-    });
-
-    setCodigoGerado(novoAnalista.codigo);
-    setEnviando(false);
-    setConcluido(true);
+      setCodigoGerado(novoAnalista.codigo);
+      setEnviando(false);
+      setConcluido(true);
+    } catch (error) {
+      console.error('Erro ao cadastrar:', error);
+      setEnviando(false);
+    }
   };
 
   // Tela de conclusão

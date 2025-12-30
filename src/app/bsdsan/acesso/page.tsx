@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -11,7 +11,11 @@ import BSDSANFooter from '@/components/bsdsan/Footer';
 
 export default function AcessoPage() {
   const router = useRouter();
-  const { loginAnalista, analistas } = useBSDSANStore();
+  const { loginAnalista, inicializar } = useBSDSANStore();
+
+  useEffect(() => {
+    inicializar();
+  }, [inicializar]);
 
   const [codigo, setCodigo] = useState('');
   const [status, setStatus] = useState<'idle' | 'verificando' | 'sucesso' | 'erro' | 'pendente'>('idle');
@@ -28,35 +32,34 @@ export default function AcessoPage() {
 
     setStatus('verificando');
 
-    // Simular verificação
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    try {
+      // Chamar API de login
+      const analista = await loginAnalista(codigo.toUpperCase());
 
-    // Verificar se o analista existe
-    const analista = analistas.find((a) => a.codigo === codigo.toUpperCase());
+      if (!analista) {
+        setStatus('erro');
+        setMensagemErro('Código de acesso inválido. Verifique se digitou corretamente.');
+        return;
+      }
 
-    if (!analista) {
-      setStatus('erro');
-      setMensagemErro('Código de acesso inválido. Verifique se digitou corretamente.');
-      return;
-    }
+      if (analista.status === 'pendente') {
+        setStatus('pendente');
+        return;
+      }
 
-    if (analista.status === 'pendente') {
-      setStatus('pendente');
-      return;
-    }
+      if (analista.status === 'inativo') {
+        setStatus('erro');
+        setMensagemErro('Seu credenciamento foi suspenso. Entre em contato com a administração.');
+        return;
+      }
 
-    if (analista.status === 'inativo') {
-      setStatus('erro');
-      setMensagemErro('Seu credenciamento foi suspenso. Entre em contato com a administração.');
-      return;
-    }
-
-    // Login bem-sucedido
-    const resultado = loginAnalista(codigo.toUpperCase());
-    if (resultado) {
+      // Login bem-sucedido
       setStatus('sucesso');
       await new Promise((resolve) => setTimeout(resolve, 1500));
       router.push('/bsdsan/portal');
+    } catch {
+      setStatus('erro');
+      setMensagemErro('Erro ao verificar credenciais. Tente novamente.');
     }
   };
 
