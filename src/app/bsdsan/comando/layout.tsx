@@ -16,12 +16,14 @@ import {
   Loader2,
   Menu,
   X,
+  Brain,
 } from 'lucide-react';
 
 const menuItems = [
   { href: '/bsdsan/comando', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/bsdsan/comando/analistas', label: 'Analistas', icon: Users },
   { href: '/bsdsan/comando/missoes', label: 'Missões', icon: ClipboardList },
+  { href: '/bsdsan/comando/avaliacoes', label: 'Avaliações', icon: Brain },
   { href: '/bsdsan/comando/comunicados', label: 'Comunicados', icon: MessageSquare },
   { href: '/bsdsan/comando/configuracoes', label: 'Configurações', icon: Settings },
 ];

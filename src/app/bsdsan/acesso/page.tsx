@@ -32,6 +32,15 @@ export default function AcessoPage() {
 
     setStatus('verificando');
 
+    // Verificar código especial de avaliação da Cristina
+    if (codigo.toUpperCase() === 'BSDSAN-CRISTINA-2025') {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      setStatus('sucesso');
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+      router.push('/bsdsan/avaliacao');
+      return;
+    }
+
     try {
       // Chamar API de login
       const analista = await loginAnalista(codigo.toUpperCase());
